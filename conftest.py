@@ -25,6 +25,7 @@ def pytest_addoption(parser):
 @pytest.fixture()
 def driver(request):
     browser_name = request.config.getoption("--browser")
+    url = request.config.getoption("--url")
     _driver = None
     if browser_name == "chrome":
         S = Service(f'{DRIVERS_STORAGE}/chromedriver')
@@ -46,17 +47,5 @@ def driver(request):
         capa["pageLoadStrategy"] = "none"
         _driver = webdriver.ChromiumEdge(service=S)
 
-    yield _driver
+    yield _driver, url
     _driver.close()
-
-
-@pytest.fixture()
-def url(request):
-    url = request.config.getoption("--url")
-    return url
-
-
-@pytest.fixture()
-def wait():
-    wait = WebDriverWait(driver, 5, poll_frequency=1)
-    return wait
