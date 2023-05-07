@@ -1,64 +1,68 @@
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from page_objects.AdminInterPage import AdminInterPage
+from page_objects.AdminPage import AdminPage
+from page_objects.CatalogPage import CatalogPage
+from page_objects.IphoneCard import IphoneCard
+from page_objects.MainPage import MainPage
+from page_objects.RegisterPage import RegisterPage
 
 
-def test_main_page(driver, url):
-    driver.get(url)
-    wait = WebDriverWait(driver, 5, poll_frequency=1)
-    wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "div#search")))
-    driver.find_element(By.CSS_SELECTOR, "div#search")
-    driver.find_element(By.CSS_SELECTOR, "nav > div.navbar-ex1-collapse")
-    driver.find_element(By.ID, "content")
-    driver.find_element(By.XPATH, "//div[@id='content']/div[@class='row']")
-    driver.find_element(By.CSS_SELECTOR, "footer > div > div.row")
+def test_main_page(driver):
+    main_page = MainPage(driver)
+    main_page.check_search_element()
+    main_page.check_product_row()
+    main_page.check_navbar_element()
+    main_page.check_content_element()
+    main_page.check_footer_info_row()
 
 
-def test_catalog_page(driver, url):
-    wait = WebDriverWait(driver, 5, poll_frequency=1)
-    driver.get(url + "/desktops")
-    wait.until(EC.visibility_of_element_located((By.ID, "top-links")))
-    driver.find_element(By.ID, "top-links")
-    driver.find_element(By.CSS_SELECTOR, "nav#menu")
-    driver.find_element(By.CSS_SELECTOR, "aside#column-left > div.list-group")
-    driver.find_element(By.XPATH, "//div[@class='swiper-viewport']/div[@id='banner0']")
-    driver.find_element(By.XPATH, "//div[@id='content']/div[@class='row']")
+def test_catalog_page(driver):
+    catalog_page = CatalogPage(driver)
+    catalog_page.check_top_links()
+    catalog_page.check_nav_menu()
+    catalog_page.check_left_menu()
+    catalog_page.check_left_banner()
+    catalog_page.check_central_description()
 
 
-def test_product_card(driver, url):
-    wait = WebDriverWait(driver, 5, poll_frequency=1)
-    driver.get(url + "/desktops/iphone")
-    wait.until(EC.presence_of_element_located((By.XPATH, "//a[normalize-space()='iPhone']")))    # Fix long page loading
-    driver.execute_script("window.stop();")
-    driver.find_element(By.ID, 'search')
-    driver.find_element(By.ID, 'cart')
-    driver.find_element(By.CSS_SELECTOR, "li > a.thumbnail")
-    driver.find_element(By.CSS_SELECTOR, "div.col-sm-8 > ul.nav-tabs")
-    driver.find_element(By.XPATH, "//div[@class='row']/div[@class='col-sm-4']")
+def test_iphone_card(driver):
+    iphone_card = IphoneCard(driver)
+    iphone_card.check_search_element()
+    iphone_card.check_cart_element()
+    iphone_card.check_pict_screen()
+    iphone_card.check_nav_tabs()
+    iphone_card.check_main_logo()
 
 
-def test_admin_page(driver, url):
-    wait = WebDriverWait(driver, 5, poll_frequency=1)
-    driver.get(url + "/admin")
-    wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".panel-heading")))
-    driver.find_element(By.ID, 'header-logo')
-    driver.find_element(By.CSS_SELECTOR, 'div.col-sm-4 > div.panel')
-    driver.find_element(By.NAME, "username")
-    driver.find_element(By.XPATH, "//div[@class='text-right']/button[*]")
-    driver.find_element(By.NAME, "password")
+def test_admin_page(driver):
+    admin_page = AdminPage(driver)
+    admin_page.check_header_logo()
+    admin_page.check_main_panel()
+    admin_page.check_username()
+    admin_page.check_button_login()
+    admin_page.check_password()
 
 
-def test_register_page(driver, url):
-    wait = WebDriverWait(driver, 5, poll_frequency=1)
-    driver.get(url)
-    wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "a[title='My Account']")))
-    driver.find_element(By.CSS_SELECTOR, "a[title='My Account']").click()
-    driver.find_element(By.XPATH, "//a[normalize-space()='Register']").click()
-    # /index.php?route=account/register
-    wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "div#content > p")))
-    driver.find_element(By.CSS_SELECTOR, "div#content > p")
-    driver.find_element(By.CSS_SELECTOR, "fieldset#account")
-    driver.find_element(By.ID, "input-firstname")
-    driver.find_element(By.ID, "input-password")
-    driver.find_element(By.XPATH, "//input[@name='agree']")
-    driver.find_element(By.XPATH, "//aside[@id='column-right']/div[@class='list-group']")
+def test_register_page(driver):
+    register_page = RegisterPage(driver)
+    register_page.check_already_have_an_account_string()
+    register_page.check_main_info_table()
+    register_page.check_firstname_input()
+    register_page.check_password_input()
+    register_page.check_privacy_checkbox()
+    register_page.check_right_table()
+
+
+def test_admin_functional_page(driver):
+    test = AdminInterPage(driver)
+    test.add_test_product()
+    test.remove_test_product()
+
+
+def test_add_new_user(driver):
+    main = MainPage(driver)
+    main.add_new_test_user()
+
+
+def test_change_currency(driver):
+    main = MainPage(driver)
+    main.change_currency("€")
